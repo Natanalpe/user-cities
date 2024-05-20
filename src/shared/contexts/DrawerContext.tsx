@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useState } from 'react';
 interface IDrawerOption {
   icon: string;
   label: string;
-  path: string
+  path: string;
 }
 
 interface IDrawerContextData {
@@ -20,7 +20,7 @@ export const useDrawerContext = () => {
 }
 
 interface IDrawerProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export const DrawerProvider: React.FC<IDrawerProviderProps> = ({ children }) => {

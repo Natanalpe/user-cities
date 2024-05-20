@@ -1,10 +1,18 @@
-import React from "react";
+import { FerramentasDaListagem } from "../../shared/components";
 import { LayoutBaseDePagina } from "../../shared/layouts";
 
-export const Dashboard: React.FC = () => {
+export const Dashboard = () => {
+     
      return (
-          <LayoutBaseDePagina children={undefined} title="Página inicial" barraDeFerramentas {...<>Teste</>}/>
-               teste
+          <LayoutBaseDePagina 
+               titulo="Página inicial"
+               barraDeFerramentas={
+                    <FerramentasDaListagem 
+                         mostrarInputBusca
+                         textoBotaoNovo="Nova"/>
+               }>
+
+               Test
           </LayoutBaseDePagina>
-     )
-}
+     );
+};
