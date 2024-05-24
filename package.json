@@ -27,6 +27,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "globals": "^15.1.0",
+    "json-server": "^1.0.0-beta.0",
     "typescript": "^4.9.5",
     "typescript-eslint": "^7.7.1",
     "web-vitals": "^2.1.4"
