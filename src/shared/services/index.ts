@@ -1,1 +1,1 @@
-export {};
+import { getAll, getById, create, updateById, deleteById } from './pessoas/PessoasServices';
