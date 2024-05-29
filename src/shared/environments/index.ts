@@ -3,7 +3,7 @@ export const Environment = {
     /**
      * Define a quantidade máxima de linhas(itens) mostrados nas listagens.
      */
-    LIMITE_DE_LINHAS: 10,
+    LIMITE_DE_LINHAS: 1,
 
     /**
      * Define o 'placeholder' dos inputs de busca.

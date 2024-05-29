@@ -20,13 +20,13 @@ type TPessoaComTotalCount = {
     totalCount: number
 }
 
-export const getAll = async (page = 1, filter = ''): Promise<TPessoaComTotalCount | Error> => {
+const getAll = async (page = 1, filter = ''): Promise<TPessoaComTotalCount | Error> => {
     try {
         const urlRelativa = `/pessoas?_page=${page}&_per_page=${Environment.LIMITE_DE_LINHAS}&nomeCompleto_like=${filter}`;
         const { data, headers } = await Api.get(urlRelativa);
 
         if (data) {
-            return { data, totalCount: Number(headers['x-total-count'] || Environment.LIMITE_DE_LINHAS) };
+            return { data, totalCount: headers['x-total-count'] || Environment.LIMITE_DE_LINHAS };
         }
 
         return new Error('Erro ao listar registros!');
@@ -38,7 +38,7 @@ export const getAll = async (page = 1, filter = ''): Promise<TPessoaComTotalCoun
 }
 
 
-export const getById = async (id: number): Promise<IDetalhePessoas | Error> => {
+const getById = async (id: number): Promise<IDetalhePessoas | Error> => {
     try {
         const urlRelativa = `/pessoas/${id}`;
         const { data } = await Api.get(urlRelativa);
@@ -54,7 +54,7 @@ export const getById = async (id: number): Promise<IDetalhePessoas | Error> => {
     }
 }
 
-export const create = async (dadosPessoa: Omit<IDetalhePessoas, 'id'>): Promise<number | Error> => {
+const create = async (dadosPessoa: Omit<IDetalhePessoas, 'id'>): Promise<number | Error> => {
     try {
         const { data } = await Api.post<IDetalhePessoas>('/pessoas', dadosPessoa);
 
@@ -69,7 +69,7 @@ export const create = async (dadosPessoa: Omit<IDetalhePessoas, 'id'>): Promise<
     }
 }
 
-export const updateById = async (id: number, pessoaAtualizada: IDetalhePessoas): Promise<void | Error> => {
+const updateById = async (id: number, pessoaAtualizada: IDetalhePessoas): Promise<void | Error> => {
 
     try {
         await Api.put<IDetalhePessoas>(`/pessoas/${id}`, pessoaAtualizada);
@@ -79,11 +79,13 @@ export const updateById = async (id: number, pessoaAtualizada: IDetalhePessoas):
     }
 }
 
-export const deleteById = async (id: number): Promise<void | Error> => {
+const deleteById = async (id: number): Promise<void | Error> => {
     try {
         await Api.delete(`/pessoas/${id}`);
     } catch (error) {
         console.error(error);
-        return new Error((error as { message: string}).message || "Falha ao apagar registro.");
+        return new Error((error as { message: string }).message || "Falha ao apagar registro.");
     }
 }
+
+export const PessoasService = { getAll, getById, create, updateById, deleteById };
