@@ -1,24 +1,22 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef } from 'react';
 
 
-export const useDebounce = (delay: number = 300, notDelayInFirstTime = true) => {
+export const useDebounce = (delay = 300, notDelayInFirstTime = true) => {
+  const isFirstTime = useRef(notDelayInFirstTime);
+  const debouncing = useRef<NodeJS.Timeout>();
 
-    const isFirsttime = useRef(notDelayInFirstTime);
-    const debouncing = useRef<NodeJS.Timeout>();
 
-    const debounce = useCallback((func: () => void) => {
+  const debounce = useCallback((func: () => void) => {
+    if (isFirstTime.current) {
+      isFirstTime.current = false;
+      func();
+    } else {
+      if (debouncing.current) {
+        clearTimeout(debouncing.current);
+      }
+      debouncing.current = setTimeout(() => func(), delay);
+    }
+  }, [delay]);
 
-        if (isFirsttime.current) {
-            isFirsttime.current = false;
-            func();
-        } else {
-            if (debouncing.current) {
-                clearTimeout(debouncing.current);
-            }
-
-            debouncing.current = setTimeout(() => { func() }, delay);
-        }
-    }, [delay])
-
-    return { debounce };
-}
+  return { debounce };
+};

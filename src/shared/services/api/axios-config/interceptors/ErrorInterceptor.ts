@@ -1,13 +1,15 @@
-import { AxiosError } from "axios";
+import { AxiosError } from 'axios';
+
 
 export const errorInterceptor = (error: AxiosError) => {
-    if(error.message === 'Network error') {
-        return Promise.reject(new Error('Erro de conexão.'));
-    }
 
-    if(error.response?.status === 401) {
-        // Erro de autenticação
-    }
+  if (error.message === 'Network Error') {
+    return Promise.reject(new Error('Erro de conexão.'));
+  }
 
-    return Promise.reject(error);
+  if (error.response?.status === 401) {
+    // Do something
+  }
+
+  return Promise.reject(error);
 };

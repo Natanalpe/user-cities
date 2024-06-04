@@ -1,14 +1,13 @@
 # Como usar
 
-1. Abra uma nova aba no ternimal
-2. Execute o seguinte comando
+1. Abra uma nova aba no terminal
+2. Execute o seguinte comando: 
+    ```
+    yarn run json-server -w -p 3333 ./mock/database.json
+    ```
+    ou
+    ```
+    npm run json-server -w -p 3333 ./mock/database.json
+    ```
 
-```
-    yarn run json-server -w -p [PORTA] ./mock/database.json
-```
-
-ou
-
-```
-    npx json-server -w -p [PORTA] ./mock/database.json
-```
+  
