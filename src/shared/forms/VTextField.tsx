@@ -21,17 +21,17 @@ export const VTextField: React.FC<TTextFieldProps> = ({ name, ...rest }) => {
     }, [registerField, fieldName, value]);
 
     return (
-        <TextField 
+        <TextField
             error={!!error}
             helperText={error}
             defaultValue={defaultValue}
-            
-            {...rest}
-            
-            value={value}
-            onChange={e => setValue(e.target.value)}
 
-            onKeyDown={() => error ? clearError : undefined}
+            {...rest}
+
+            value={value}
+            onChange={e => { setValue(e.target.value); rest.onChange?.(e) }}
+
+            onKeyDown={(e) => { error && clearError(); rest.onKeyDown?.(e) }}
         />
     );
 }
