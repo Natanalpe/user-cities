@@ -16,4 +16,6 @@ export const Environment = {
    * Url base de consultado dos dados dessa aplicação
    */
   URL_BASE: 'http://localhost:3333',
+
+  CAMPO_OBRIGATORIO: 'Campo obrigatório.'
 };
