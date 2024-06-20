@@ -1,88 +1,91 @@
-import { CidadesService } from "../../../shared/services/api/cidades/CidadesService";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useDebounce } from "../../../shared/hooks";
-import { useField } from "@unform/core";
+import { useEffect, useMemo, useState } from 'react';
+import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 
-interface IAutoCompleteCidadesProps {
-    isExternalLoading?: boolean
-}
+import { CidadesService } from '../../../shared/services/api/cidades/CidadesService';
+import { useDebounce } from '../../../shared/hooks';
+import { useField } from '@unform/core';
+
 
 type TAutoCompleteOption = {
-    id: number,
-    label: string
+  id: number;
+  label: string;
 }
 
-export const AutoCompleteCidade: React.FC<IAutoCompleteCidadesProps> = ({ isExternalLoading = false }) => {
+interface IAutoCompleteCidadeProps {
+  isExternalLoading?: boolean;
+}
+export const AutoCompleteCidade: React.FC<IAutoCompleteCidadeProps> = ({ isExternalLoading = false }) => {
+  const { fieldName, registerField, defaultValue, error, clearError } = useField('cidadeId');
+  const { debounce } = useDebounce();
 
-    const { fieldName, registerField, defaultValue, error, clearError } = useField('cidadeId');
-    const { debounce } = useDebounce();
+  const [selectedId, setSelectedId] = useState<number | undefined>(defaultValue);
 
-    const [idSelecionado, setIdSelecionado] = useState<number | undefined>(defaultValue);
-    const [opcoes, setOpcoes] = useState<TAutoCompleteOption[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [busca, setBusca] = useState('');
+  const [opcoes, setOpcoes] = useState<TAutoCompleteOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [busca, setBusca] = useState('');
 
+  useEffect(() => {
+    registerField({
+      name: fieldName,
+      getValue: () => selectedId,
+      setValue: (_, newSelectedId) => setSelectedId(newSelectedId),
+    });
+  }, [registerField, fieldName, selectedId]);
 
-    useEffect(() => {
-        registerField({
-            name: '',
-            getValue: () => idSelecionado,
-            setValue: (_, newSelectedId) => setIdSelecionado(newSelectedId)
+  useEffect(() => {
+    setIsLoading(true);
+
+    debounce(() => {
+      CidadesService.getAll(1, busca)
+        .then((result) => {
+          setIsLoading(false);
+
+          if (result instanceof Error) {
+            // alert(result.message);
+          } else {
+            console.log(result);
+
+            setOpcoes(result.data.map(cidade => ({ id: cidade.id, label: cidade.nome })));
+          }
         });
-    }, [registerField, fieldName, idSelecionado]);
+    });
+  }, [busca]);
 
-    useEffect(() => {
-        setIsLoading(true);
+  const autoCompleteSelectedOption = useMemo(() => {
+    if (!selectedId) return null;
 
-        debounce(() => {
-            CidadesService.getAll(1, busca)
-                .then((result) => {
-                    setIsLoading(false);
+    const selectedOption = opcoes.find(opcao => opcao.id === selectedId);
+    if (!selectedOption) return null;
 
-                    if (result instanceof Error) {
-                        alert(result.message);
-                    } else {
-                        setOpcoes(result.data.map(cidade => ({ id: cidade.id, label: cidade.nome })));
-                    }
-                });
-        });
-    }, [busca]);
+    return selectedOption;
+  }, [selectedId, opcoes]);
 
-    const autoCompleteSelectedOption = useMemo(() => {
-        if (!idSelecionado) return null;
 
-        const selectedOption = opcoes.find(opcao => opcao.id === idSelecionado);
-        if (!selectedOption) return null;
+  return (
+    <Autocomplete
+      openText='Abrir'
+      closeText='Fechar'
+      noOptionsText='Sem opções'
+      loadingText='Carregando...'
 
-        return selectedOption;
-    }, [idSelecionado, opcoes]);
+      disablePortal
 
-    return (
-        <Autocomplete
-            disabled={isExternalLoading}
-            value={autoCompleteSelectedOption}
-            onInputChange={(_, novoValor) => setBusca(novoValor)}
-            popupIcon={(isExternalLoading || isLoading) && <CircularProgress size={28} />}
-            onChange={(_, novoValor) => {
-                setIdSelecionado(novoValor?.id);
-                setBusca('');
-                clearError();
-            }}
-            loading={isLoading}
-            loadingText="Carregando..."
-            openText="Abrir"
-            closeText="Fechar"
-            disablePortal
-            options={opcoes}
-            renderInput={(params) => {
-                <TextField
-                    {...params}
-                    label="Cidade"
-                    error={!!error}
-                    helperText={error}
-                />
-            }}
+      options={opcoes}
+      loading={isLoading}
+      disabled={isExternalLoading}
+      value={autoCompleteSelectedOption}
+      onInputChange={(_, newValue) => setBusca(newValue)}
+      onChange={(_, newValue) => { setSelectedId(newValue?.id); setBusca(''); clearError(); }}
+      popupIcon={(isExternalLoading || isLoading) ? <CircularProgress size={28} /> : undefined}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+
+          label="Cidade"
+          error={!!error}
+          helperText={error}
         />
-    );
+      )}
+    />
+  );
 };
